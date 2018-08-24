@@ -1,0 +1,9 @@
+numpy
+scipy
+opencv-python
+pywavelets
+pandas
+seaborn
+matplotlib
+tensorflow==1.5
+Keras
