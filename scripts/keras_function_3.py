@@ -2,7 +2,7 @@ import numpy as np
 # My scripts import
 from scripts.Segmentation import Segmentation
 from scripts.Rect import Rect
-from scripts.extremumlib import get_cwt, get_cwt_swt, linear, bound_filter
+from scripts.extremumlib import get_cwt, get_static_cwt, linear, bound_filter
 
 from keras.models import model_from_json
 import matplotlib.pyplot as plt
@@ -49,13 +49,22 @@ def predict(window, scale=50, assurance=0.9, wdname='db6', wcname='morl'):
     block_sizex = 32
     block_sizey = 32
 
+    shift = 30
+
     assert len(window) >= block_sizey + 10
     try:
-        window = np.array(window)
-    except:
-        return [],[]
 
-    M = get_cwt_swt(window,
+        window = list(window)
+        tmp = window[-shift:]
+        tmp.reverse()
+        window.extend(tmp)
+        window = np.array(window[shift:])
+        print(window.shape)
+    except Exception as e:
+        print(e)
+        return [],[],[]
+
+    M = get_static_cwt(window,
                     scale=scale,
                     mask=[1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
                     wdname=wdname,
@@ -114,7 +123,7 @@ def predict(window, scale=50, assurance=0.9, wdname='db6', wcname='morl'):
     return correct_rects, segmentations, M
 
 
-correct_rects, segmentations, M = predict(price_series[-256:], assurance=0.5, wdname='dmey')
+correct_rects, segmentations, M = predict(price_series[-256:], assurance=0.5, wdname='db6')
 fig, ax = plt.subplots()
 plt.matshow(M, fignum=False)
 
