@@ -7,6 +7,10 @@ def detrend(window, wname='db6'):
     return wavedec_filtration(window, [0], wname=wname)
 
 
+def get_trend(window, wname='db6'):
+    return wavedec_filtration(window, [1] + [0 for i in range(20)], wname=wname)
+
+
 def resample(A, size):
     res = []
     old_size = A.shape
@@ -48,6 +52,10 @@ def tanh(x):
 
 def linear(X):
     return X / np.abs(X).max()
+
+
+def linear_normal(X):
+    return linear(X - X.min())
 
 
 def get_cwt(window, mask = (0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0), wdname='db6', wcname='morl', scale=40):

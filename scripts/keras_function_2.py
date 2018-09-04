@@ -50,13 +50,6 @@ cnn.compile(optimizer=opt, loss=loss, metrics=metrics)
 
 plt.style.use('dark_background')
 
-with open('../train_data/temp.txt', 'r') as f:
-    lines = list(f)
-    price_series = [float(x) for x in lines[0][1:-2].split(',')]
-    price_times = [str(x) for x in lines[1][1:-2].split(",")]
-    # print(line)
-    n = len(price_series)
-    # print(price_series)
 
 images = []
 
@@ -64,7 +57,7 @@ window_size = 256
 
 intervals = []
 
-for b in range(0, 10 * 256, 256):
+for b in range(0, 10 * 256, ):
 
     # b = 0  # 1792
 

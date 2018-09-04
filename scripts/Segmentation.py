@@ -38,6 +38,11 @@ class Segment:
         self.points = points
         self.convex = []
         self.convex_rect = []
+        self.type = 0
+        self.maxx = None
+        self.minx = None
+        self.maxy = None
+        self.miny = None
 
     def recalc_convex_rect(self):
         minx = self.points[0][0]
@@ -57,6 +62,11 @@ class Segment:
         self.convex_rect.append((maxx, maxy))
         self.convex_rect.append((minx, maxy))
         self.convex_rect.append((minx, miny))   # closure
+
+        self.minx = minx
+        self.miny = miny
+        self.maxx = maxx
+        self.maxy = maxy
 
         self.convex_rect = np.array(self.convex_rect)
 
@@ -119,13 +129,14 @@ class Segmentation:
     def extract(self, alpha=0.25):
         self.plane = self.prepare(alpha=alpha)
         n, m = self.plane.shape
-        print(n, m)
+        # print(n, m)
         for i in range(n):
             for j in range(m):
                 if self._ok((i, j)):
                     s = Segment([])
                     self.dfs((i, j), s)
-                    print(s.points)
+                    s.type = np.sign(self.plane[i, j])
+                    # print(s.points)
                     self.segmentation.append(s.normalize())
 
     def _ok(self, coord):
@@ -156,11 +167,11 @@ class Segmentation:
 
     def recalc_separators(self):
         self.segmentation = sorted(self.segmentation, key = lambda a: a.convex_rect[0][1])
-        print([s.convex_rect for s in self.segmentation])
+        # print([s.convex_rect for s in self.segmentation])
         self.separators = []
-        print("number of segments ", len(self.segmentation))
+        # print("number of segments ", len(self.segmentation))
         for i in range(1, len(self.segmentation)):
-            print(self.segmentation[i - 1].convex_rect[1][1], self.segmentation[i].convex_rect[0][1])
+            # print(self.segmentation[i - 1].convex_rect[1][1], self.segmentation[i].convex_rect[0][1])
             self.separators.append((self.segmentation[i - 1].convex_rect[2][1] + self.segmentation[i].convex_rect[0][1])/2)
 
         self.separators = np.array(self.separators)
